@@ -1,10 +1,10 @@
 // ignore: depend_on_referenced_packages
 import 'package:flutter/material.dart';
 import 'package:kiddie/Pages/Registration/forgetPassword_pages/sendCode_page.dart';
-import 'package:kiddie/models/Button/CircleButton.dart';
-import 'package:kiddie/models/CustomContainer/curve_container.dart';
-import 'package:kiddie/models/CustomTextFaild/customTextFaild.dart';
-import '../../../models/widget/BackgroundImage.dart';
+import 'package:kiddie/models/Button/circle_button.dart';
+import 'package:kiddie/models/curve_container.dart';
+import 'package:kiddie/models/customTextFaild.dart';
+import '../../../helper/background_image.dart';
 
 // ignore: camel_case_types, must_be_immutable
 class forgetPassword extends StatelessWidget {
@@ -24,7 +24,6 @@ class forgetPassword extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: BackgroundImage(
-        image: "assets/images/firstPages/paper.jpg",
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

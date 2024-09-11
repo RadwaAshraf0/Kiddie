@@ -41,6 +41,11 @@ dependencies:
   persistent_bottom_nav_bar: ^6.2.1
   animations: ^2.0.11
   line_awesome_flutter: ^3.0.1
+  percent_indicator: ^4.2.3
+  audioplayers: ^6.1.0
+
+
+
 
 
 dev_dependencies:
@@ -72,6 +77,14 @@ flutter:
     - assets/images/Home/
     - assets/images/settings/
     - assets/images/profile/
+    - assets/images/categories/Basics/
+    - assets/images/categories/Basics/numbers/
+    - assets/sounds/numbers/
+    - assets/images/categories/Basics/Alphabet/
+    - assets/images/categories/words/animals/
+    - assets/images/categories/words/vegetables/
+    - assets/images/categories/words/birds/
+    - assets/images/categories/words/fruits/
 
     
 
