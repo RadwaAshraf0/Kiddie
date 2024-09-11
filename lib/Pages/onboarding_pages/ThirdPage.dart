@@ -1,7 +1,7 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
-import 'package:kiddie/Pages/Registration/SignIn.dart';
-import 'package:kiddie/models/widget/onboardingModel.dart';
+import 'package:kiddie/Pages/Registration/SignIn_page.dart';
+import 'package:kiddie/models/onboardingModel.dart';
 
 class ThirdPage extends StatelessWidget {
   const ThirdPage({super.key});

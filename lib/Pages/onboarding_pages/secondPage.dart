@@ -1,7 +1,7 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
 import 'package:kiddie/Pages/onboarding_pages/ThirdPage.dart';
-import 'package:kiddie/models/widget/onboardingModel.dart';
+import 'package:kiddie/models/onboardingModel.dart';
 
 
 class SecondPage extends StatelessWidget {

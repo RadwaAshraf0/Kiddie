@@ -1,10 +1,10 @@
 // ignore: depend_on_referenced_packages
 import 'package:flutter/material.dart';
-import 'package:kiddie/Pages/Registration/SignIn.dart';
-import 'package:kiddie/models/Button/CircleButton.dart';
-import 'package:kiddie/models/CustomContainer/curve_container.dart';
-import '../../../models/widget/BackgroundImage.dart';
-import '../../../models/CustomTextFaild/customTextFaild.dart';
+import 'package:kiddie/Pages/Registration/SignIn_page.dart';
+import 'package:kiddie/models/Button/circle_button.dart';
+import 'package:kiddie/models/curve_container.dart';
+import '../../../helper/background_image.dart';
+import '../../../models/customTextFaild.dart';
 
 // ignore: camel_case_types
 class newPassword extends StatefulWidget {
@@ -34,7 +34,6 @@ class _newPasswordState extends State<newPassword> {
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: BackgroundImage(
-        image: "assets/images/firstPages/paper.jpg",
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [

@@ -1,9 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:kiddie/Pages/Home_Pages/Basics_Pages/alphabet_page.dart';
+import 'package:kiddie/Pages/Home_Pages/Basics_Pages/categoriesBasics_page.dart';
+import 'package:kiddie/Pages/Home_Pages/Basics_Pages/numbers_page.dart';
+import 'package:kiddie/Pages/Home_Pages/words_page/categoriesWords_page.dart';
+import 'package:kiddie/Pages/Profile_Pages/edite-profile.dart';
 import 'package:kiddie/Pages/Home_Pages/home_page.dart';
-import 'package:kiddie/Pages/Home_Pages/profile_page.dart';
-import 'package:kiddie/Pages/Home_Pages/setting_page.dart';
+import 'package:kiddie/Pages/Profile_Pages/profile_page.dart';
+import 'package:kiddie/Pages/setting_page.dart';
 import 'package:kiddie/Pages/Registration/signup_page.dart';
 import 'package:kiddie/Pages/Registration/forgetPassword_pages/forgetPassword_page.dart';
 import 'package:kiddie/Pages/Registration/forgetPassword_pages/new_password_page.dart';
@@ -11,7 +16,7 @@ import 'package:kiddie/Pages/Registration/forgetPassword_pages/sendCode_page.dar
 import 'package:kiddie/Pages/onboarding_pages/FirstPage.dart';
 import 'package:kiddie/Pages/onboarding_pages/ThirdPage.dart';
 import 'package:kiddie/Pages/onboarding_pages/secondPage.dart';
-import 'package:kiddie/Pages/Registration/SignIn.dart';
+import 'package:kiddie/Pages/Registration/SignIn_page.dart';
 import 'package:kiddie/Pages/welcome.dart';
 
 void main() {
@@ -39,11 +44,16 @@ class Kiddie extends StatelessWidget {
         "SignIn":(context) => const SignIn(),
         "SignUp":(context) => const Signup(),
         "forgetPassword":(context) =>  forgetPassword(),
-        "sendCode":(context) =>  sendCode(),
+        "sendCode":(context) =>  const sendCode(),
         "newPassword":(context) => newPassword(),
-        "HomePage":(context) => HomePage(),
-        "ProfilePage":(context) => ProfilePage(),
-        "SettingPage":(context) => SettingPage(),
+        "HomePage":(context) => const HomePage(),
+        "ProfilePage":(context) => const ProfilePage(),
+        "SettingPage":(context) => const SettingPage(),
+        "EditeProfile":(context) => Edite_profile(),
+        "bacsics_categories": (context) => const bacsics_categories(),
+        "numbers_page": (context) =>  numbers_page(),
+        "alphabet_page": (context) => alphabet_page(),
+        "words_categories": (context) =>const words_categories(),
 
 
 

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:kiddie/Pages/Registration/SignIn.dart';
-import 'package:kiddie/models/widget/BackgroundImage.dart';
-import 'package:kiddie/models/Button/CircleButton.dart';
-import 'package:kiddie/models/Button/customButton.dart';
-import 'package:kiddie/models/CustomContainer/curve_container.dart';
-import 'package:kiddie/models/CustomTextFaild/customTextFaild.dart';
+import 'package:kiddie/Pages/Registration/SignIn_page.dart';
+import 'package:kiddie/helper/background_image.dart';
+import 'package:kiddie/models/Button/circle_button.dart';
+import 'package:kiddie/models/Button/custom_button.dart';
+import 'package:kiddie/models/curve_container.dart';
+import 'package:kiddie/models/customTextFaild.dart';
 
-import '../../models/widget/CustomNavBarModel.dart';
+import '../../models/CustomNavBarModel.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -32,7 +32,6 @@ class _SignupState extends State<Signup> {
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: BackgroundImage(
-        image: "assets/images/firstPages/paper.jpg",
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [

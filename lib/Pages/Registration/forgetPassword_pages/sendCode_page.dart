@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
 import 'package:kiddie/Pages/Registration/forgetPassword_pages/new_password_page.dart';
-import 'package:kiddie/models/Button/CircleButton.dart';
-import 'package:kiddie/models/CustomContainer/curve_container.dart';
+import 'package:kiddie/models/Button/circle_button.dart';
+import 'package:kiddie/models/curve_container.dart';
 import 'package:timer_count_down/timer_count_down.dart';
-import '../../../models/widget/BackgroundImage.dart';
+import '../../../helper/background_image.dart';
 
 // ignore: camel_case_types
 class sendCode extends StatelessWidget {
@@ -23,7 +23,6 @@ class sendCode extends StatelessWidget {
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: BackgroundImage(
-        image: "assets/images/firstPages/paper.jpg",
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [ 
