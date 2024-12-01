@@ -1,22 +1,169 @@
+// ignore: file_names
+// ignore_for_file: avoid_print
+
+import 'dart:typed_data';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:kiddie/Pages/Profile_Pages/profile_page.dart';
 import 'package:kiddie/Pages/Registration/forgetPassword_pages/new_password_page.dart';
-import 'package:kiddie/models/customTextFaild.dart';
+import 'package:kiddie/components/utils.dart';
+import 'package:kiddie/helper/background_image.dart';
+import 'package:kiddie/helper/custom_text.dart';
+import 'package:kiddie/models/Button/custom_button.dart';
+import 'package:kiddie/models/TextFaild/customTextFaild.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 
-import '../../models/Button/circle_button.dart';
-import '../../models/Button/custom_button.dart';
-import '../../helper/background_image.dart';
-
-// ignore: must_be_immutable, camel_case_types
-class Edite_profile extends StatelessWidget {
-  Edite_profile({super.key});
+class EditeProfile extends StatefulWidget {
+  const EditeProfile({super.key});
   static String id = 'EditeProfile';
-  String userText = 'Hamza Salem';
-  String emailText = 'hamza_salem@gmail.com';
+
+  @override
+  State<EditeProfile> createState() => _EditeProfileState();
+}
+
+class _EditeProfileState extends State<EditeProfile> {
+  bool isUpdate = false;
+  Uint8List? _image;
+  String? name;
+  String? email;
+  String? profilePhoto;
+  bool isLoading = true;
+
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    String? userId = FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId != null) {
+      try {
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(userId)
+            .get();
+
+        if (userSnapshot.exists) {
+          setState(() {
+            name = userSnapshot['Name'] ?? 'User';
+            email = userSnapshot['Email'] ?? 'No email available';
+            profilePhoto = userSnapshot['profilePhoto'] ?? '';
+            _nameController.text = name!;
+            _emailController.text = email!;
+            isLoading = false; 
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+        }
+      } catch (e) {
+        print('Error fetching user data: $e');
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<String?> uploadImageToStorage(Uint8List image) async {
+    try {
+      String userId = FirebaseAuth.instance.currentUser!.uid;
+      Reference ref = FirebaseStorage.instance
+          .ref()
+          .child('profilePictures')
+          .child('$userId.jpg');
+
+      UploadTask uploadTask = ref.putData(image);
+      TaskSnapshot snap = await uploadTask;
+
+      if (snap.state == TaskState.success) {
+        String downloadUrl = await snap.ref.getDownloadURL();
+        print("Image uploaded successfully. Download URL: $downloadUrl");
+        return downloadUrl;
+      } else {
+        print("Upload failed. TaskState: ${snap.state}");
+        return null;
+      }
+    } catch (e) {
+      print("Error uploading image: $e");
+      return null;
+    }
+  }
+
+  Future<void> updateUserData(String name, String email, String? imageUrl) async {
+    String? userId = FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId != null) {
+      try {
+        Map<String, dynamic> updatedData = {
+          'Name': name,
+          'Email': email,
+        };
+        if (imageUrl != null) {
+          updatedData['profilePhoto'] = imageUrl;
+        }
+
+        await FirebaseFirestore.instance.collection('Users').doc(userId).update(updatedData);
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
+      } catch (e) {
+        print("Error updating user data: $e");
+      }
+    }
+  }
+
+  Future<bool> doesFileExist(String userId) async {
+    try {
+      Reference ref = FirebaseStorage.instance
+          .ref()
+          .child('profilePictures')
+          .child('$userId.jpg');
+      await ref.getDownloadURL();
+      return true;
+    } catch (e) {
+      if (e is FirebaseException && e.code == 'object-not-found') {
+        print("File does not exist at path profilePictures/$userId.jpg");
+        return false;
+      }
+      throw e; // Keep original error for other cases
+    }
+  }
+
+  void selectImage() async {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+    bool exists = await doesFileExist(userId);
+
+    if (!exists) {
+      Uint8List img = await pickImage(ImageSource.gallery);
+      if (img != null) {
+        setState(() {
+          _image = img;
+        });
+        String? downloadUrl = await uploadImageToStorage(img);
+        if (downloadUrl != null) {
+          print("Uploaded and got download URL: $downloadUrl");
+        }
+      }
+    } else {
+      print("File already exists. No need to re-upload.");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator()); // Show loading indicator while fetching data
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       extendBodyBehindAppBar: true,
@@ -39,25 +186,20 @@ class Edite_profile extends StatelessWidget {
                       child: Stack(
                         alignment: Alignment.topCenter,
                         children: [
-                          Container(
-                            height: MediaQuery.of(context).size.width * 0.33,
-                            width: MediaQuery.of(context).size.width * 0.33,
-                            decoration: const BoxDecoration(
-                              color: Color.fromARGB(186, 0, 0, 0),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          Container(
-                            height: MediaQuery.of(context).size.width * 0.3,
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/profile/profile.jpg'),
-                              ),
-                            ),
-                          ),
+                          _image != null
+                              ? CircleAvatar(
+                                  radius: 64,
+                                  backgroundImage: MemoryImage(_image!),
+                                )
+                              : profilePhoto != null && profilePhoto!.isNotEmpty
+                                  ? CircleAvatar(
+                                      radius: 64,
+                                      backgroundImage: NetworkImage(profilePhoto!),
+                                    )
+                                  : const CircleAvatar(
+                                      radius: 64,
+                                      backgroundImage: AssetImage('assets/images/profile/profile.jpg'),
+                                    ),
                           Positioned(
                             bottom: 0,
                             right: 0,
@@ -69,12 +211,11 @@ class Edite_profile extends StatelessWidget {
                                 color: const Color.fromARGB(199, 250, 207, 154),
                               ),
                               child: IconButton(
-                                onPressed: () {},
+                                onPressed: selectImage,
                                 icon: Icon(
                                   LineAwesomeIcons.camera_retro_solid,
                                   color: Colors.black,
-                                  size:
-                                      MediaQuery.of(context).size.width * 0.05,
+                                  size: MediaQuery.of(context).size.width * 0.05,
                                 ),
                               ),
                             ),
@@ -85,21 +226,17 @@ class Edite_profile extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.05,
-              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
               customTextFaild(
                 hintText: 'User Name',
-                textEditingController: TextEditingController(text: userText),
+                textEditingController: _nameController,
                 enable: false,
                 iconButton: const Icon(LineAwesomeIcons.user),
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.04,
-              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.04),
               customTextFaild(
                 hintText: 'Email',
-                textEditingController: TextEditingController(text: emailText),
+                textEditingController: _emailController,
                 enable: false,
                 iconButton: const Icon(Icons.email_outlined),
               ),
@@ -115,95 +252,43 @@ class Edite_profile extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => newPassword()),
                     );
                   },
-                  child: const Text(
-                    '  Change Password?',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Playfair Display',
-                    ),
+                  child: CustomText(
+                    text: '  Change Password?',
+                    color: Colors.black,
+                    fontSize: MediaQuery.of(context).size.width * 0.0001,
                   ),
                 ),
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.05,
-              ),
-              customButton(
+              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+              CustomButton(
                 height: MediaQuery.of(context).size.height * 0.0001,
                 width: MediaQuery.of(context).size.width * 0.0016,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ProfilePage()),
-                  );
+                color: const Color.fromARGB(199, 250, 207, 154),
+                onPressed: () async {
+                  setState(() {
+                    isUpdate = true;
+                  });
+                  String? imageUrl;
+                  if (_image != null) {
+                    imageUrl = await uploadImageToStorage(_image!);
+                  }
+                  await updateUserData(_nameController.text, _emailController.text, imageUrl);
+                  setState(() {
+                    isUpdate = false; // Resetting update state after process
+                  });
                 },
-                text: "Update",
-                color: const Color.fromARGB(201, 1, 1, 1),
-                tcolor: Colors.white,
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.05,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width * 0.15,
-                ),
-                child: const Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Divider(
-                        height: 0.0,
-                        thickness: 0.7,
-                        color: Colors.black54,
+                text: isUpdate
+                    ? const CircularProgressIndicator(color: Colors.black)
+                    : Text(
+                        "Update",
+                        style: TextStyle(
+                            fontFamily: 'Playfair Display',
+                            fontSize: MediaQuery.of(context).size.width * 0.09,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
                       ),
-                    ),
-                    Text(
-                      '   Sign In With   ',
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Playfair Display',
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        height: 0.0,
-                        thickness: 0.7,
-                        color: Colors.black54,
-                      ),
-                    ),
-                  ],
-                ),
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.03,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  CircleButton(
-                    onPressed: () {},
-                    child: Image.asset('assets/images/Registration/google.png'),
-                  ),
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.1),
-                  CircleButton(
-                    onPressed: () {},
-                    child: Image.asset('assets/images/Registration/apple.png'),
-                  ),
-                  SizedBox(width: MediaQuery.of(context).size.width * 0.1),
-                  CircleButton(
-                    onPressed: () {},
-                    child:
-                        Image.asset('assets/images/Registration/facebook.png'),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.05,
-              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             ],
           ),
         ),

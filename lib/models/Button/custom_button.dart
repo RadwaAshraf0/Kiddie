@@ -1,40 +1,37 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
-import 'package:kiddie/helper/custom_text.dart';
 
-// ignore: camel_case_types, must_be_immutable
-class customButton extends StatelessWidget {
-  // ignore: prefer_const_constructors_in_immutables
-  customButton(
-      {super.key,
-      this.text,
-      this.onPressed,
-      this.color,
-      this.tcolor,
-      required this.height,
-      required this.width});
+class CustomButton extends StatelessWidget {
+  const CustomButton({
+    super.key,
+    this.text,
+    this.onPressed,
+    this.color,
+    required this.height,
+    required this.width,
+  });
 
-  final String? text;
+  final Widget? text;
   final Color? color;
-  final Color? tcolor;
   final double width;
   final double height;
   final Function()? onPressed;
+
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ButtonStyle(
-        backgroundColor: WidgetStateProperty.all<Color>(
-          color!,
+        backgroundColor: MaterialStateProperty.all<Color>(
+          color ?? Colors.grey, // Provide a default color
         ),
       ),
-      onPressed: onPressed!,
+      onPressed: onPressed ?? () {}, // Provide a default function
       child: SizedBox(
         height: MediaQuery.of(context).size.height * height,
         width: MediaQuery.of(context).size.width * width,
-        child: Center(
-            child: CustomText(fontSize: 0.09, color: tcolor!, text: text!)),
+        child: Center(child: text),
       ),
     );
   }
 }
+

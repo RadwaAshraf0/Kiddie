@@ -1,12 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kiddie/Pages/Registration/SignIn_page.dart';
 import 'package:kiddie/helper/background_image.dart';
-import 'package:kiddie/models/Button/circle_button.dart';
+import 'package:kiddie/helper/custom_text.dart';
 import 'package:kiddie/models/Button/custom_button.dart';
+import 'package:kiddie/models/TextFaild/validiationTextFaild.dart';
 import 'package:kiddie/models/curve_container.dart';
-import 'package:kiddie/models/customTextFaild.dart';
+import 'package:kiddie/models/signIn_with.dart';
+
+import '../../components/toast.dart';
+import '../../components/user_auth/firebaseAuthService.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../models/CustomNavBarModel.dart';
+final CollectionReference collRef = FirebaseFirestore.instance.collection("Users");
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -17,15 +24,24 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   bool passenable = true;
-  TextEditingController email = TextEditingController();
-  // ignore: non_constant_identifier_names
-  TextEditingController UserName = TextEditingController();
-  TextEditingController password = TextEditingController();
+  bool isSigningUp = false;
+  final FirebaseeAuthService _auth = FirebaseeAuthService();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-       extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -38,14 +54,12 @@ class _SignupState extends State<Signup> {
             Expanded(
               flex: 1,
               child: Padding(
-                padding:  EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.072 ),
-                child: const Text(
-                  "Sign Up",
-                  style: TextStyle(
-                    fontSize: 80,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Playfair Display',
-                  ),
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.072),
+                child: CustomText(
+                  color: Colors.black,
+                  text: "Sign Up",
+                  fontSize: MediaQuery.of(context).size.width * 0.00062,
                 ),
               ),
             ),
@@ -61,39 +75,37 @@ class _SignupState extends State<Signup> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.1,
                     ),
-                      customTextFaild(
-                      enable: false ,
-                      textEditingController: UserName,
+                    TextFormFaild(
+                      enable: false,
+                      textEditingController: _usernameController,
                       hintText: 'UserName',
                       iconButton: const Icon(Icons.person),
                     ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.02,
                     ),
-                    customTextFaild(
+                    TextFormFaild(
                       enable: false,
-                      textEditingController: email,
+                      textEditingController: _emailController,
                       hintText: 'Email Address',
                       iconButton: const Icon(Icons.email),
                     ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.001,
                     ),
-                    customTextFaild(
+                    TextFormFaild(
                       enable: passenable,
                       hintText: "Password",
-                      textEditingController: password,
+                      textEditingController: _passwordController,
                       iconButton: IconButton(
-                        onPressed: () {
-                          //add Icon button at end of TextField
+                        onPressed: () 
+                        {
                           setState(() {
-                            //refresh UI
-                            if (passenable) {
-                              //if passenable == true, make it false
+                            if (passenable) 
+                            {
                               passenable = false;
                             } else {
-                              passenable =
-                                  true; //if passenable == false, make it true
+                              passenable = true;
                             }
                           });
                         },
@@ -102,23 +114,31 @@ class _SignupState extends State<Signup> {
                             : Icons.password),
                       ),
                     ),
-                    
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.035,
                     ),
                     Padding(
-                      padding:  EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.035),
-                      child: customButton(
+                      padding: EdgeInsets.symmetric(
+                          horizontal:
+                              MediaQuery.of(context).size.width * 0.035),
+                      child: CustomButton(
                         height: MediaQuery.of(context).size.height * 0.0001,
                         width: MediaQuery.of(context).size.width * 0.0017,
-                        onPressed: () {Navigator.push(
-                        // ignore: use_build_context_synchronously
-                        context,
-                        MaterialPageRoute(builder: (context) => const CustomNavBar()),
-                      );},
-                        text: "Sign Up",
+                        onPressed: _signUp,
                         color: Colors.white70,
-                        tcolor: Colors.black,
+                        text: isSigningUp
+                            ? const CircularProgressIndicator(
+                                color: Colors.black)
+                            : Text(
+                                "Sign Up",
+                                style: TextStyle(
+                                    fontFamily: 'Playfair Display',
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.09,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
                       ),
                     ),
                     Padding(
@@ -127,95 +147,34 @@ class _SignupState extends State<Signup> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
-                            'Already have an account? ',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Color.fromARGB(255, 105, 102, 102),
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Playfair Display',
-                            ),
+                          CustomText(
+                            text: 'Already have an account? ',
+                            color: const Color.fromARGB(255, 105, 102, 102),
+                            fontSize:
+                                MediaQuery.of(context).size.width * 0.000085,
                           ),
                           GestureDetector(
-                            onTap: () { Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const SignIn()),
-                                  );},
-                            child: const Text(
-                              '  Sign in?',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Playfair Display',
-                              ),
+                            onTap: () {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const SignIn()),
+                                  (route) => false);
+                            },
+                            child: CustomText(
+                              text: ' Sign in',
+                              color: Colors.black,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.0001,
                             ),
                           ),
                         ],
                       ),
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
+                      height: MediaQuery.of(context).size.height * 0.04,
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.height * 0.05,
-                      ),
-                      child: const Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Divider(
-                              height: 0.0,
-                              thickness: 0.7,
-                              color: Colors.black54,
-                            ),
-                          ),
-                          Text(
-                            '   Sign In With   ',
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Playfair Display',
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              height: 0.0,
-                              thickness: 0.7,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.03,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        CircleButton(
-                          onPressed: () {},
-                          child: Image.asset('assets/images/Registration/google.png'),
-                        ),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.1),
-                        CircleButton(
-                          onPressed: () {},
-                          child: Image.asset('assets/images/Registration/apple.png'),
-                        ),
-                        SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.1),
-                        CircleButton(
-                          child: Image.asset('assets/images/Registration/facebook.png'),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                   
+                    const SigninWith(),
                   ],
                 ),
               ),
@@ -224,5 +183,39 @@ class _SignupState extends State<Signup> {
         ),
       ),
     );
+  }
+
+  void _signUp() async {
+    setState(() {
+      isSigningUp = true;
+    });
+
+    String username = _usernameController.text.trim();
+    String email = _emailController.text.trim();
+    String password = _passwordController.text.trim();
+
+    User? user =
+        await FirebaseeAuthService().signUpWithEmailAndPassword(email, password, username,);
+
+    setState(() {
+      isSigningUp = false;
+    });
+    if (user != null) {
+      String userId = user.uid; // Get the Firebase Authentication UID for the user
+
+      showToast(message: "User successfully");
+
+      // Initialize progress document in the 'UserProgress' collection for this user
+      
+
+      // Navigate to the next screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const CustomNavBar()),
+      );
+  
+  } else {
+      showToast(message: "Some error happend");
+    }
   }
 }

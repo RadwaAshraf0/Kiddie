@@ -31,19 +31,19 @@ class _CustomNavBarState extends State<CustomNavBar> {
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.person_3),
         title: ("Profile"),
-        activeColorPrimary: Color.fromARGB(255, 250, 207, 154),
+        activeColorPrimary: const Color.fromARGB(255, 250, 207, 154),
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.home),
         title: ("Home"),
-        activeColorPrimary: Color.fromARGB(255, 250, 207, 154),
+        activeColorPrimary: const Color.fromARGB(255, 250, 207, 154),
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.settings),
         title: ("Setting"),
-        activeColorPrimary: Color.fromARGB(255, 250, 207, 154),
+        activeColorPrimary: const Color.fromARGB(255, 250, 207, 154),
         inactiveColorPrimary: Colors.grey,
       ),
     ];
@@ -81,7 +81,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
               colorBehindNavBar: Colors.transparent, 
               
             ),
-                        popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
+            popBehaviorOnSelectedNavBarItemPress: PopBehavior.all,
             animationSettings: const NavBarAnimationSettings(
               navBarItemAnimation: ItemAnimationSettings(
                 duration: Duration(milliseconds: 200),

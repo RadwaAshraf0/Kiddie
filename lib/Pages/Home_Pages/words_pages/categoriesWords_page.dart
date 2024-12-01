@@ -1,6 +1,7 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
-import 'package:kiddie/Pages/Home_Pages/Basics_Pages/alphabet_page.dart';
-import 'package:kiddie/Pages/Home_Pages/Basics_Pages/numbers_page.dart';
+import 'package:kiddie/Pages/Home_Pages/words_pages/animals_page.dart';
+import 'package:kiddie/Pages/Home_Pages/words_pages/vegetables_page.dart';
 import 'package:kiddie/helper/background_image.dart';
 import 'package:kiddie/helper/custom_text.dart';
 import 'package:kiddie/models/categories_card.dart';
@@ -38,13 +39,13 @@ class _words_categoriesState extends State<words_categories> {
         imageRight: 200,
         description: "Cat, Dog, giraffe, ......., etc",
         enName: "Animals",
-        bgColor: const Color.fromARGB(255, 243, 240, 254),
-        circleColor: const Color.fromARGB(255, 227, 221, 255),
+        bgColor: const Color.fromARGB(255, 240, 254, 247),
+        circleColor: const Color.fromARGB(255, 202, 255, 228),
         image: 'assets/images/categories/words/animals/animals.png',
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => alphabet_page()),
+            MaterialPageRoute(builder: (context) => animals_page()),
           );
         },
       ),
@@ -59,29 +60,29 @@ class _words_categoriesState extends State<words_categories> {
         imageRight: 0,
         description: "Raptors, Waterfowl, ......, etc",
         enName: "Birds",
-        bgColor: const Color.fromARGB(255, 253, 235, 248),
-        circleColor: const Color.fromARGB(255, 247, 210, 236),
+        bgColor: const Color.fromARGB(255, 233, 251, 255),
+        circleColor: const Color.fromARGB(255, 207, 246, 255),
         image: 'assets/images/categories/words/birds/birds.png',
         onTap: () {},
       ),
       Item(
         circleBottom: -100,
-        circleLeft: -310,
+        circleLeft: -320,
         circleTop: 0,
         circleRight: 0,
-        textLeft: 170,
+        textLeft: 160,
         textRight: 0,
         imageLeft: 0,
         imageRight: 200,
-        description: "Carrots, Potatoes, ....., etc",
+        description: "  Carrots, Potatoes, ....., etc",
         enName: "Vegetables",
-        bgColor: const Color.fromARGB(255, 241, 251, 220),
-        circleColor: const Color.fromARGB(255, 219, 245, 158),
+        bgColor:  const Color.fromARGB(255, 253, 250, 227),
+        circleColor: const Color.fromARGB(255, 252, 244, 178),
         image: 'assets/images/categories/words/vegetables/vegetables.png',
         onTap: () {
-          Navigator.push(
+           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => numbers_page()),
+            MaterialPageRoute(builder: (context) => vegetables_page()),
           );
         },
       ),
@@ -95,9 +96,9 @@ class _words_categoriesState extends State<words_categories> {
         imageLeft: 200,
         imageRight: 0,
         enName: "Fruits",
-        description: "",
-        bgColor: const Color.fromARGB(255, 252, 249, 225),
-        circleColor: const Color.fromARGB(255, 245, 233, 144),
+        description: "Orange, Strawberry, ......., etc ",
+        bgColor: const Color.fromARGB(255, 255, 243, 227),
+        circleColor: const Color.fromARGB(255, 255, 228, 193),
         image: 'assets/images/categories/words/fruits/fruits.png',
         onTap: () {},
       ),

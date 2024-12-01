@@ -34,6 +34,8 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
+  flutter_plugin_android_lifecycle: ^2.0.22
+  firebase_app_check: ^0.3.1+5
   cupertino_icons: ^1.0.6
   device_preview: ^1.2.0
   flutter_otp_text_field: ^1.1.0+2
@@ -43,6 +45,18 @@ dependencies:
   line_awesome_flutter: ^3.0.1
   percent_indicator: ^4.2.3
   audioplayers: ^6.1.0
+  firebase_auth: ^5.2.1
+  firebase_storage: ^12.3.0
+  cloud_firestore: ^5.4.1
+  firebase_core: ^3.4.1
+  fluttertoast: ^8.2.8
+  image_picker: ^1.1.2
+  url_launcher: ^6.3.0
+  google_sign_in: ^6.2.1
+  flutter_facebook_auth: ^7.1.1
+  get: ^4.6.6
+
+
 
 
 
@@ -51,6 +65,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.1
+
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -58,6 +75,12 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/firstPages/icon.jpeg"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/images/firstPages/icon.jpeg"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -80,6 +103,7 @@ flutter:
     - assets/images/categories/Basics/
     - assets/images/categories/Basics/numbers/
     - assets/sounds/numbers/
+    - assets/sounds/alphabet/
     - assets/images/categories/Basics/Alphabet/
     - assets/images/categories/words/animals/
     - assets/images/categories/words/vegetables/

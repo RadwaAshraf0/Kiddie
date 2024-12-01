@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kiddie/Pages/Registration/forgetPassword_pages/sendCode_page.dart';
 import 'package:kiddie/models/Button/circle_button.dart';
 import 'package:kiddie/models/curve_container.dart';
-import 'package:kiddie/models/customTextFaild.dart';
+import 'package:kiddie/models/TextFaild/customTextFaild.dart';
 import '../../../helper/background_image.dart';
 
 // ignore: camel_case_types, must_be_immutable

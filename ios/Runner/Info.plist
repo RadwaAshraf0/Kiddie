@@ -2,6 +2,26 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>GIDClientID</key>
+	<!-- TODO Replace this value: -->
+	<!-- Copied from GoogleService-Info.plist key CLIENT_ID -->
+	<string>451165195080-bbun2b2ergfjtflrm2bq8ol6h3dkg458.apps.googleusercontent.com</string>
+		<!-- Put me in the [my_project]/ios/Runner/Info.plist file -->
+	<!-- Google Sign-in Section -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- TODO Replace this value: -->
+				<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
+				<string>com.googleusercontent.apps.451165195080-bbun2b2ergfjtflrm2bq8ol6h3dkg458</string>
+			</array>
+		</dict>
+	</array>
+	<!-- End of the Google Sign-in Section -->
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -45,5 +65,16 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Photo Library Usage</string>
+		<key>NSCameraUsageDescription</key>
+		<string>Camer Usage</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>Microphone Usage</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+  	 <string>sms</string>
+ 	 <string>tel</string>
+	</array>	
 </dict>
 </plist>

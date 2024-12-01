@@ -4,7 +4,7 @@ import 'package:kiddie/Pages/Registration/SignIn_page.dart';
 import 'package:kiddie/models/Button/circle_button.dart';
 import 'package:kiddie/models/curve_container.dart';
 import '../../../helper/background_image.dart';
-import '../../../models/customTextFaild.dart';
+import '../../../models/TextFaild/customTextFaild.dart';
 
 // ignore: camel_case_types
 class newPassword extends StatefulWidget {

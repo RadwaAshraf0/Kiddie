@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "451165195080",
+    "project_id": "kiddie-ab777",
+    "storage_bucket": "kiddie-ab777.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:451165195080:android:2f086d68d9067adb7c017d",
+        "android_client_info": {
+          "package_name": "com.example.kiddie"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMbay_ioK_O9sdXdRzeSP2_y9RdGgdqOQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

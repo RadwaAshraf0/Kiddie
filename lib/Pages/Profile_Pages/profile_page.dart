@@ -1,259 +1,262 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kiddie/Pages/Profile_Pages/edite-profile.dart';
+import 'package:kiddie/models/progress_model.dart';
 import 'package:kiddie/helper/background_image.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:percent_indicator/percent_indicator.dart';
+
+import '../../helper/custom_text.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
   static String id = 'ProfilePage';
-  final double initialPercentage = 40.0;
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late double percentage;
+  // Default data
+  String name = "Loading...";
+  String email = "Loading...";
+  String profilePhoto = "";
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    percentage = widget.initialPercentage;
+    fetchUserData();
   }
 
-  Color _getColorForPercentage(double percentage) {
-    if (percentage <= 20) {
-      return Colors.red;
-    } else if (percentage <= 50) {
-      return Colors.orange;
-    } else if (percentage <= 75) {
-      return Colors.yellow;
-    } else {
-      return Colors.green;
+  Future<void> fetchUserData() async {
+    // Get the current user ID
+    String? userId = FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId == null) {
+      print("No user logged in.");
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+      return;
+    }
+
+    try {
+      // Fetch User data
+      final userSnapshot = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userId)
+          .get();
+
+      // Ensure the widget is still mounted before updating state
+      if (!mounted) return;
+
+      setState(() {
+        if (userSnapshot.exists) {
+          name = userSnapshot['Name'] ?? "Unknown User";
+          email = userSnapshot['Email'] ?? "No Email Provided";
+          profilePhoto = userSnapshot['profilePhoto'] ?? "";
+        }
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error fetching user data: $e");
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      extendBodyBehindAppBar: true,
-      body: BackgroundImage(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.06,
-                ),
-                child: Center(
-                  child: Stack(
-                    alignment: Alignment.topCenter,
-                    children: [
-                      Container(
-                        height: MediaQuery.of(context).size.width * 0.33,
-                        width: MediaQuery.of(context).size.width * 0.33,
-                        decoration: const BoxDecoration(
-                          color: Color.fromARGB(186, 0, 0, 0),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      Container(
-                        height: MediaQuery.of(context).size.width * 0.3,
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: AssetImage(
-                              'assets/images/profile/profile.jpg',
+    String? userId = FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId == null) {
+      return const Center(child: Text("User not logged in"));
+    }
+
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('UserProgress')
+          .doc(userId)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        }
+
+        if (!snapshot.hasData || !snapshot.data!.exists) {
+          return const Center(child: Text("No progress data found"));
+        }
+
+        var data = snapshot.data!.data() as Map<String, dynamic>? ?? {};
+        int percentage = data['progress'] ?? 0;
+        int cumulativeScore = data['total_score'] ?? 0;
+
+        int _getCurrentLevel() {
+          return (cumulativeScore / 25).ceil().clamp(1, 4);
+        }
+
+        int currentLevel = _getCurrentLevel();
+
+        return Scaffold(
+          resizeToAvoidBottomInset: false,
+          extendBodyBehindAppBar: true,
+          body: BackgroundImage(
+            child: Column(
+              children: <Widget>[
+                // Profile Image Section
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.06,
+                    ),
+                    child: Center(
+                      child: Stack(
+                        alignment: Alignment.topCenter,
+                        children: [
+                          Container(
+                            height: MediaQuery.of(context).size.width * 0.33,
+                            width: MediaQuery.of(context).size.width * 0.33,
+                            decoration: const BoxDecoration(
+                              color: Color.fromARGB(186, 0, 0, 0),
+                              shape: BoxShape.circle,
                             ),
                           ),
+                          Container(
+                            height: MediaQuery.of(context).size.width * 0.3,
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: profilePhoto.isNotEmpty
+                                    ? NetworkImage(profilePhoto)
+                                    : const AssetImage(
+                                            'assets/images/profile/profile.jpg')
+                                        as ImageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: MediaQuery.of(context).size.width * 0.01,
+                            top: MediaQuery.of(context).size.width * 0.24,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.09,
+                              height: MediaQuery.of(context).size.width * 0.09,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: const Color.fromARGB(199, 250, 207, 154),
+                              ),
+                              child: IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const EditeProfile(),
+                                    ),
+                                  );
+                                },
+                                icon: Icon(
+                                  LineAwesomeIcons.edit,
+                                  color: Colors.black,
+                                  size:
+                                      MediaQuery.of(context).size.width * 0.05,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Name, Email, and Edit Button Section
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        child: Stack(
+                          alignment: Alignment.topCenter,
+                          children: [
+                            Text(
+                              name,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                                fontFamily: "Playfair Display",
+                                fontSize:
+                                    MediaQuery.of(context).size.width * 0.06,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * 0.045,
+                              ),
+                              child: Text(
+                                email,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontFamily: "Playfair Display",
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.038,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+
+                      // Progress Bar Section
+                      const SizedBox(
+                        height: 65,
+                      ),
+                      isLoading
+                          ? const CircularProgressIndicator()
+                          : Stack(
+                              children: [
+                                Progress(
+                                  percentage: percentage,
+                                  color: const Color.fromARGB(178, 0, 0, 0),
+                                  tcolor: Colors.white,
+                                  score: cumulativeScore,
+                                  displayTotalScore: true,
+                                ),
+                                Positioned(
+                                  bottom: 40,
+                                  right: 155,
+                                  child: Center(
+                                    child: CustomText(
+                                      fontSize: 0.04,
+                                      color: Colors.white,
+                                      text: "Levels: $currentLevel/4",
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                     ],
                   ),
                 ),
-              ),
+              ],
             ),
-            Expanded(
-              flex: 3,
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: Stack(
-                      alignment: Alignment.topCenter,
-                      children: [
-                        Text(
-                          'Hamza Salem',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontFamily: "Playfair Display",
-                            fontSize: MediaQuery.of(context).size.width * 0.06,
-                          ),
-                        ),
-                        Positioned(
-                          top: 1,
-                          left: MediaQuery.of(context).size.width * 0.7,
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.09,
-                            height: MediaQuery.of(context).size.width * 0.09,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              color: const Color.fromARGB(199, 250, 207, 154),
-                            ),
-                            child: IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Edite_profile(),
-                                  ),
-                                );
-                              },
-                              icon: Icon(
-                                LineAwesomeIcons.edit,
-                                color: Colors.black,
-                                size: MediaQuery.of(context).size.width * 0.05,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: MediaQuery.of(context).size.height * 0.045,
-                          ),
-                          child: Text(
-                            'hamza_salem@gmail.com',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontFamily: "Playfair Display",
-                              fontSize:
-                                  MediaQuery.of(context).size.width * 0.038,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 65,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: MediaQuery.of(context).size.width * 0.04,
-                    ),
-                    child: Stack(
-                      children: [
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.45,
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 5,
-                                blurRadius:7,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                            color: const Color.fromARGB(201, 1, 1, 1),
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: Stack(
-                            alignment: Alignment.bottomCenter,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.05,
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      'Your progress',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                        fontFamily: "Playfair Display",
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.07,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.03,
-                                  ),
-                                  CircularPercentIndicator(
-                                    radius: MediaQuery.of(context).size.width *
-                                        0.18,
-                                    lineWidth:
-                                        MediaQuery.of(context).size.width *
-                                            0.038,
-                                    animation: true,
-                                    animationDuration: 500,
-                                    rotateLinearGradient: true,
-                                    progressColor:
-                                        _getColorForPercentage(percentage),
-                                    startAngle: 360.0,
-                                    percent: percentage / 100,
-                                    center: Text(
-                                      "$percentage%",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.05,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    backgroundColor: Colors.grey,
-                                    circularStrokeCap: CircularStrokeCap.round,
-                                  ),
-                                  SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.03,
-                                  ),
-                                  Center(
-                                    child: Text(
-                                      "Levels: 2/5",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
-                                                0.04,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Positioned(
-                          bottom: -5,
-                          right: 0,
-                          child: Image.asset(
-                            'assets/images/profile/progress.png',
-                            height: MediaQuery.of(context).size.height * 0.18,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

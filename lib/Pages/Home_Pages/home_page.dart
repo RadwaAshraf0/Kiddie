@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kiddie/Pages/Home_Pages/words_page/categoriesWords_page.dart';
+import 'package:kiddie/Pages/Home_Pages/activities_pages/levels_page.dart';
+import 'package:kiddie/Pages/Home_Pages/words_pages/categoriesWords_page.dart';
 import 'package:kiddie/helper/background_image.dart';
 import '../../../components/item.dart';
 import '../../models/Animation/WaveCurves.dart';
@@ -99,7 +100,12 @@ class _HomePageState extends State<HomePage> {
         bgColor: const Color.fromARGB(255, 252, 230, 227),
         circleColor: const Color(0xffFECAC3),
         image: 'assets/images/Home/qiuz.png',
-        onTap: () {},
+        onTap: () {
+           Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const levels_page()),
+          );
+        },
       ),
     ]);
   }
