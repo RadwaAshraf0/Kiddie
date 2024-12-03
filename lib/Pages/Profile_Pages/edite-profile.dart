@@ -58,7 +58,7 @@ class _EditeProfileState extends State<EditeProfile> {
             profilePhoto = userSnapshot['profilePhoto'] ?? '';
             _nameController.text = name!;
             _emailController.text = email!;
-            isLoading = false; 
+            isLoading = false;
           });
         } else {
           setState(() {
@@ -99,7 +99,8 @@ class _EditeProfileState extends State<EditeProfile> {
     }
   }
 
-  Future<void> updateUserData(String name, String email, String? imageUrl) async {
+  Future<void> updateUserData(
+      String name, String email, String? imageUrl) async {
     String? userId = FirebaseAuth.instance.currentUser?.uid;
 
     if (userId != null) {
@@ -112,9 +113,13 @@ class _EditeProfileState extends State<EditeProfile> {
           updatedData['profilePhoto'] = imageUrl;
         }
 
-        await FirebaseFirestore.instance.collection('Users').doc(userId).update(updatedData);
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .doc(userId)
+            .update(updatedData);
         // ignore: use_build_context_synchronously
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ProfilePage()));
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const ProfilePage()));
       } catch (e) {
         print("Error updating user data: $e");
       }
@@ -139,29 +144,25 @@ class _EditeProfileState extends State<EditeProfile> {
   }
 
   void selectImage() async {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    bool exists = await doesFileExist(userId);
+    Uint8List img = await pickImage(ImageSource.gallery);
+    if (img != null) {
+      setState(() {
+        _image = img;
+      });
 
-    if (!exists) {
-      Uint8List img = await pickImage(ImageSource.gallery);
-      if (img != null) {
-        setState(() {
-          _image = img;
-        });
-        String? downloadUrl = await uploadImageToStorage(img);
-        if (downloadUrl != null) {
-          print("Uploaded and got download URL: $downloadUrl");
-        }
+      String? downloadUrl = await uploadImageToStorage(img);
+      if (downloadUrl != null) {
+        print("Uploaded and got download URL: $downloadUrl");
       }
-    } else {
-      print("File already exists. No need to re-upload.");
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator()); // Show loading indicator while fetching data
+      return const Center(
+          child:
+              CircularProgressIndicator()); // Show loading indicator while fetching data
     }
 
     return Scaffold(
@@ -194,11 +195,13 @@ class _EditeProfileState extends State<EditeProfile> {
                               : profilePhoto != null && profilePhoto!.isNotEmpty
                                   ? CircleAvatar(
                                       radius: 64,
-                                      backgroundImage: NetworkImage(profilePhoto!),
+                                      backgroundImage:
+                                          NetworkImage(profilePhoto!),
                                     )
                                   : const CircleAvatar(
                                       radius: 64,
-                                      backgroundImage: AssetImage('assets/images/profile/profile.jpg'),
+                                      backgroundImage: AssetImage(
+                                          'assets/images/profile/profile.jpg'),
                                     ),
                           Positioned(
                             bottom: 0,
@@ -215,7 +218,8 @@ class _EditeProfileState extends State<EditeProfile> {
                                 icon: Icon(
                                   LineAwesomeIcons.camera_retro_solid,
                                   color: Colors.black,
-                                  size: MediaQuery.of(context).size.width * 0.05,
+                                  size:
+                                      MediaQuery.of(context).size.width * 0.05,
                                 ),
                               ),
                             ),
@@ -272,7 +276,8 @@ class _EditeProfileState extends State<EditeProfile> {
                   if (_image != null) {
                     imageUrl = await uploadImageToStorage(_image!);
                   }
-                  await updateUserData(_nameController.text, _emailController.text, imageUrl);
+                  await updateUserData(
+                      _nameController.text, _emailController.text, imageUrl);
                   setState(() {
                     isUpdate = false; // Resetting update state after process
                   });

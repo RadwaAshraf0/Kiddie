@@ -70,8 +70,6 @@ class _ProgressState extends State<Progress> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     int currentPercentage = widget.displayTotalScore
@@ -79,7 +77,6 @@ class _ProgressState extends State<Progress> {
         : ((levelScore / 25) * 100).round();
 
     int scoreToDisplay = widget.displayTotalScore ? widget.score : levelScore;
-
 
     return Center(
       child: Padding(

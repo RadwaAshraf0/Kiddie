@@ -101,11 +101,6 @@ class _ProfilePageState extends State<ProfilePage> {
         int percentage = data['progress'] ?? 0;
         int cumulativeScore = data['total_score'] ?? 0;
 
-        int _getCurrentLevel() {
-          return (cumulativeScore / 25).ceil().clamp(1, 4);
-        }
-
-        int currentLevel = _getCurrentLevel();
 
         return Scaffold(
           resizeToAvoidBottomInset: false,
@@ -227,28 +222,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       isLoading
                           ? const CircularProgressIndicator()
-                          : Stack(
-                              children: [
-                                Progress(
-                                  percentage: percentage,
-                                  color: const Color.fromARGB(178, 0, 0, 0),
-                                  tcolor: Colors.white,
-                                  score: cumulativeScore,
-                                  displayTotalScore: true,
-                                ),
-                                Positioned(
-                                  bottom: 40,
-                                  right: 155,
-                                  child: Center(
-                                    child: CustomText(
-                                      fontSize: 0.04,
-                                      color: Colors.white,
-                                      text: "Levels: $currentLevel/4",
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                          : Progress(
+                            percentage: percentage,
+                            color: const Color.fromARGB(178, 0, 0, 0),
+                            tcolor: Colors.white,
+                            score: cumulativeScore,
+                            displayTotalScore: true,
+                          ),
                     ],
                   ),
                 ),
