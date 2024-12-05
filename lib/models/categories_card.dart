@@ -71,7 +71,7 @@ class CategoriesCard extends StatelessWidget {
                                 child: Padding(
                                   padding: EdgeInsets.only(
                                       left: MediaQuery.of(context).size.width *
-                                          0.03,
+                                          0.01,
                                       top: MediaQuery.of(context).size.height *
                                           0.03),
                                   child: Column(

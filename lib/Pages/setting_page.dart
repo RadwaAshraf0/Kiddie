@@ -217,7 +217,7 @@ class _SettingPageState extends State<SettingPage> {
                 fontSize: 0.0001,
                 icon: Icons.logout_outlined,
                 text: 'LogOut',
-               onPressed: () => FirebaseeAuthService().logOut(context),
+                onPressed: () => FirebaseeAuthService().logOut(context),
                 child: IconButton(
                   onPressed: () {},
                   icon: const Icon(
